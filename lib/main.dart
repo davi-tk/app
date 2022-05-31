@@ -64,30 +64,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      scrollBehavior: MyCustomScrollBehavior(),
-      home: Scaffold(
-        body: ListView(
-          scrollDirection: Axis.vertical,
-          children: [
-            Container(
-              color: Colors.blue,
-              width: 850,
-              height: 850,
-            ),
-            Container(
-              color: Colors.orange,
-              width: 850,
-              height: 850,
-            ),
-            Container(
-              color: Colors.green,
-              width: 850,
-              height: 850,
-            ),
-          ],
-        ),
-      ),
+    return const MaterialApp(
+      home: MyHomePage(),
     );
+  }
+}
+
+class MyHomePage extends StatelessWidget {
+  const MyHomePage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Text('Olá');
   }
 }
