@@ -1,4 +1,4 @@
-import 'dart:developer';
+// ignore_for_file: avoid_print
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -34,8 +34,7 @@ class Human with ChangeNotifier, DiagnosticableTreeMixin {
   //Get e Set pra Gênero
   int get genre => _genre;
   void setGenre(int genre) {
-    _genre++;
-    print(_genre);
+    _genre = genre;
     notifyListeners();
   }
 
@@ -78,17 +77,18 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var genero = context.watch<Human>().genre;
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("Descubra seu corpo"),
+      ),
       body: Center(
         child: Column(
-          children: const <Widget>[
-            Text("Você apertou:"),
+          children: const [
+            GenderSelector(),
             Count(),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => context.read<Human>().setGenre(1),
       ),
     );
   }
@@ -99,7 +99,39 @@ class Count extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var state = context.watch<Human>().genre; 
-    return Text('$state');
+    return Text(
+
+        /// Calls `context.watch` to make [Count] rebuild when [Counter] changes.
+        '${context.watch<Human>().genre}',
+        key: const Key('counterState'),
+        style: Theme.of(context).textTheme.headline4);
+  }
+}
+
+class GenderSelector extends StatelessWidget {
+  const GenderSelector({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        ListTile(
+          title: const Text('Mulher'),
+          leading: Radio<int>(
+            value: 0,
+            groupValue: context.watch<Human>().genre,
+            onChanged: (value) => {context.read<Human>().setGenre(value!)},
+          ),
+        ),
+        ListTile(
+          title: const Text('Homem'),
+          leading: Radio<int>(
+            value: 1,
+            groupValue: context.watch<Human>().genre,
+            onChanged: (value) => {context.read<Human>().setGenre(value!)},
+          ),
+        ),
+      ],
+    );
   }
 }
