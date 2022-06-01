@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:provider/provider.dart';
@@ -32,7 +34,8 @@ class Human with ChangeNotifier, DiagnosticableTreeMixin {
   //Get e Set pra Gênero
   int get genre => _genre;
   void setGenre(int genre) {
-    _genre = genre;
+    _genre++;
+    print(_genre);
     notifyListeners();
   }
 
@@ -75,6 +78,28 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Text('Olá');
+    return Scaffold(
+      body: Center(
+        child: Column(
+          children: const <Widget>[
+            Text("Você apertou:"),
+            Count(),
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => context.read<Human>().setGenre(1),
+      ),
+    );
+  }
+}
+
+class Count extends StatelessWidget {
+  const Count({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    var state = context.watch<Human>().genre; 
+    return Text('$state');
   }
 }
