@@ -29,7 +29,7 @@ void main() => {
 class Human with ChangeNotifier, DiagnosticableTreeMixin {
   int _genre = 0;
   double _height = 0;
-  double _waist = 0;
+  double _waist = 40;
 
   //Get e Set pra Gênero
   int get genre => _genre;
@@ -77,16 +77,21 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var genero = context.watch<Human>().genre;
     return Scaffold(
       appBar: AppBar(
         title: const Text("Descubra seu corpo"),
       ),
       body: Center(
         child: Column(
-          children: const [
-            GenderSelector(),
-            Count(),
+          children: [
+            const GenderSelector(),
+            Slider(
+              value: context.watch<Human>().waist,
+              onChanged: (waist) => context.read<Human>().setWaist(waist),
+              min: 40,
+              max: 100,
+            ),
+            const Count(),
           ],
         ),
       ),
@@ -102,7 +107,7 @@ class Count extends StatelessWidget {
     return Text(
 
         /// Calls `context.watch` to make [Count] rebuild when [Counter] changes.
-        '${context.watch<Human>().genre}',
+        context.watch<Human>().waist.toStringAsFixed(1),
         key: const Key('counterState'),
         style: Theme.of(context).textTheme.headline4);
   }
@@ -113,22 +118,26 @@ class GenderSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Row(
       children: <Widget>[
-        ListTile(
-          title: const Text('Mulher'),
-          leading: Radio<int>(
-            value: 0,
-            groupValue: context.watch<Human>().genre,
-            onChanged: (value) => {context.read<Human>().setGenre(value!)},
+        Expanded(
+          child: ListTile(
+            title: const Text('Mulher'),
+            leading: Radio<int>(
+              value: 0,
+              groupValue: context.watch<Human>().genre,
+              onChanged: (value) => {context.read<Human>().setGenre(value!)},
+            ),
           ),
         ),
-        ListTile(
-          title: const Text('Homem'),
-          leading: Radio<int>(
-            value: 1,
-            groupValue: context.watch<Human>().genre,
-            onChanged: (value) => {context.read<Human>().setGenre(value!)},
+        Expanded(
+          child: ListTile(
+            title: const Text('Homem'),
+            leading: Radio<int>(
+              value: 1,
+              groupValue: context.watch<Human>().genre,
+              onChanged: (value) => {context.read<Human>().setGenre(value!)},
+            ),
           ),
         ),
       ],
