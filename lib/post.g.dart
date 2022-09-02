@@ -15,15 +15,9 @@ extension GetPostCollection on Isar {
 const PostSchema = CollectionSchema(
   name: 'Post',
   schema:
-      '{"name":"Post","idName":"id","properties":[{"name":"categoria","type":"String"},{"name":"content","type":"String"},{"name":"date","type":"Long"},{"name":"hasListeners","type":"Bool"},{"name":"title","type":"String"}],"indexes":[],"links":[]}',
+      '{"name":"Post","idName":"id","properties":[{"name":"content","type":"String"},{"name":"hasListeners","type":"Bool"},{"name":"label","type":"String"},{"name":"title","type":"String"}],"indexes":[],"links":[]}',
   idName: 'id',
-  propertyIds: {
-    'categoria': 0,
-    'content': 1,
-    'date': 2,
-    'hasListeners': 3,
-    'title': 4
-  },
+  propertyIds: {'content': 0, 'hasListeners': 1, 'label': 2, 'title': 3},
   listProperties: {},
   indexIds: {},
   indexValueTypes: {},
@@ -61,18 +55,16 @@ List<IsarLinkBase> _postGetLinks(Post object) {
 void _postSerializeNative(IsarCollection<Post> collection, IsarRawObject rawObj,
     Post object, int staticSize, List<int> offsets, AdapterAlloc alloc) {
   var dynamicSize = 0;
-  final value0 = object.categoria;
-  final _categoria = IsarBinaryWriter.utf8Encoder.convert(value0);
-  dynamicSize += (_categoria.length) as int;
-  final value1 = object.content;
-  final _content = IsarBinaryWriter.utf8Encoder.convert(value1);
+  final value0 = object.content;
+  final _content = IsarBinaryWriter.utf8Encoder.convert(value0);
   dynamicSize += (_content.length) as int;
-  final value2 = object.date;
-  final _date = value2;
-  final value3 = object.hasListeners;
-  final _hasListeners = value3;
-  final value4 = object.title;
-  final _title = IsarBinaryWriter.utf8Encoder.convert(value4);
+  final value1 = object.hasListeners;
+  final _hasListeners = value1;
+  final value2 = object.label;
+  final _label = IsarBinaryWriter.utf8Encoder.convert(value2);
+  dynamicSize += (_label.length) as int;
+  final value3 = object.title;
+  final _title = IsarBinaryWriter.utf8Encoder.convert(value3);
   dynamicSize += (_title.length) as int;
   final size = staticSize + dynamicSize;
 
@@ -80,18 +72,19 @@ void _postSerializeNative(IsarCollection<Post> collection, IsarRawObject rawObj,
   rawObj.buffer_length = size;
   final buffer = IsarNative.bufAsBytes(rawObj.buffer, size);
   final writer = IsarBinaryWriter(buffer, staticSize);
-  writer.writeBytes(offsets[0], _categoria);
-  writer.writeBytes(offsets[1], _content);
-  writer.writeDateTime(offsets[2], _date);
-  writer.writeBool(offsets[3], _hasListeners);
-  writer.writeBytes(offsets[4], _title);
+  writer.writeBytes(offsets[0], _content);
+  writer.writeBool(offsets[1], _hasListeners);
+  writer.writeBytes(offsets[2], _label);
+  writer.writeBytes(offsets[3], _title);
 }
 
 Post _postDeserializeNative(IsarCollection<Post> collection, int id,
     IsarBinaryReader reader, List<int> offsets) {
   final object = Post();
-  object.categoria = reader.readString(offsets[0]);
+  object.content = reader.readString(offsets[0]);
   object.id = id;
+  object.label = reader.readString(offsets[2]);
+  object.title = reader.readString(offsets[3]);
   return object;
 }
 
@@ -103,12 +96,10 @@ P _postDeserializePropNative<P>(
     case 0:
       return (reader.readString(offset)) as P;
     case 1:
-      return (reader.readString(offset)) as P;
-    case 2:
-      return (reader.readDateTime(offset)) as P;
-    case 3:
       return (reader.readBool(offset)) as P;
-    case 4:
+    case 2:
+      return (reader.readString(offset)) as P;
+    case 3:
       return (reader.readString(offset)) as P;
     default:
       throw 'Illegal propertyIndex';
@@ -117,41 +108,34 @@ P _postDeserializePropNative<P>(
 
 dynamic _postSerializeWeb(IsarCollection<Post> collection, Post object) {
   final jsObj = IsarNative.newJsObject();
-  IsarNative.jsObjectSet(jsObj, 'categoria', object.categoria);
   IsarNative.jsObjectSet(jsObj, 'content', object.content);
-  IsarNative.jsObjectSet(
-      jsObj, 'date', object.date.toUtc().millisecondsSinceEpoch);
   IsarNative.jsObjectSet(jsObj, 'hasListeners', object.hasListeners);
   IsarNative.jsObjectSet(jsObj, 'id', object.id);
+  IsarNative.jsObjectSet(jsObj, 'label', object.label);
   IsarNative.jsObjectSet(jsObj, 'title', object.title);
   return jsObj;
 }
 
 Post _postDeserializeWeb(IsarCollection<Post> collection, dynamic jsObj) {
   final object = Post();
-  object.categoria = IsarNative.jsObjectGet(jsObj, 'categoria') ?? '';
+  object.content = IsarNative.jsObjectGet(jsObj, 'content') ?? '';
   object.id = IsarNative.jsObjectGet(jsObj, 'id') ?? double.negativeInfinity;
+  object.label = IsarNative.jsObjectGet(jsObj, 'label') ?? '';
+  object.title = IsarNative.jsObjectGet(jsObj, 'title') ?? '';
   return object;
 }
 
 P _postDeserializePropWeb<P>(Object jsObj, String propertyName) {
   switch (propertyName) {
-    case 'categoria':
-      return (IsarNative.jsObjectGet(jsObj, 'categoria') ?? '') as P;
     case 'content':
       return (IsarNative.jsObjectGet(jsObj, 'content') ?? '') as P;
-    case 'date':
-      return (IsarNative.jsObjectGet(jsObj, 'date') != null
-          ? DateTime.fromMillisecondsSinceEpoch(
-                  IsarNative.jsObjectGet(jsObj, 'date'),
-                  isUtc: true)
-              .toLocal()
-          : DateTime.fromMillisecondsSinceEpoch(0)) as P;
     case 'hasListeners':
       return (IsarNative.jsObjectGet(jsObj, 'hasListeners') ?? false) as P;
     case 'id':
       return (IsarNative.jsObjectGet(jsObj, 'id') ?? double.negativeInfinity)
           as P;
+    case 'label':
+      return (IsarNative.jsObjectGet(jsObj, 'label') ?? '') as P;
     case 'title':
       return (IsarNative.jsObjectGet(jsObj, 'title') ?? '') as P;
     default:
@@ -223,109 +207,6 @@ extension PostQueryWhere on QueryBuilder<Post, Post, QWhereClause> {
 }
 
 extension PostQueryFilter on QueryBuilder<Post, Post, QFilterCondition> {
-  QueryBuilder<Post, Post, QAfterFilterCondition> categoriaEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.eq,
-      property: 'categoria',
-      value: value,
-      caseSensitive: caseSensitive,
-    ));
-  }
-
-  QueryBuilder<Post, Post, QAfterFilterCondition> categoriaGreaterThan(
-    String value, {
-    bool caseSensitive = true,
-    bool include = false,
-  }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.gt,
-      include: include,
-      property: 'categoria',
-      value: value,
-      caseSensitive: caseSensitive,
-    ));
-  }
-
-  QueryBuilder<Post, Post, QAfterFilterCondition> categoriaLessThan(
-    String value, {
-    bool caseSensitive = true,
-    bool include = false,
-  }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.lt,
-      include: include,
-      property: 'categoria',
-      value: value,
-      caseSensitive: caseSensitive,
-    ));
-  }
-
-  QueryBuilder<Post, Post, QAfterFilterCondition> categoriaBetween(
-    String lower,
-    String upper, {
-    bool caseSensitive = true,
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return addFilterConditionInternal(FilterCondition.between(
-      property: 'categoria',
-      lower: lower,
-      includeLower: includeLower,
-      upper: upper,
-      includeUpper: includeUpper,
-      caseSensitive: caseSensitive,
-    ));
-  }
-
-  QueryBuilder<Post, Post, QAfterFilterCondition> categoriaStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.startsWith,
-      property: 'categoria',
-      value: value,
-      caseSensitive: caseSensitive,
-    ));
-  }
-
-  QueryBuilder<Post, Post, QAfterFilterCondition> categoriaEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.endsWith,
-      property: 'categoria',
-      value: value,
-      caseSensitive: caseSensitive,
-    ));
-  }
-
-  QueryBuilder<Post, Post, QAfterFilterCondition> categoriaContains(
-      String value,
-      {bool caseSensitive = true}) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.contains,
-      property: 'categoria',
-      value: value,
-      caseSensitive: caseSensitive,
-    ));
-  }
-
-  QueryBuilder<Post, Post, QAfterFilterCondition> categoriaMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.matches,
-      property: 'categoria',
-      value: pattern,
-      caseSensitive: caseSensitive,
-    ));
-  }
-
   QueryBuilder<Post, Post, QAfterFilterCondition> contentEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -427,53 +308,6 @@ extension PostQueryFilter on QueryBuilder<Post, Post, QFilterCondition> {
     ));
   }
 
-  QueryBuilder<Post, Post, QAfterFilterCondition> dateEqualTo(DateTime value) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.eq,
-      property: 'date',
-      value: value,
-    ));
-  }
-
-  QueryBuilder<Post, Post, QAfterFilterCondition> dateGreaterThan(
-    DateTime value, {
-    bool include = false,
-  }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.gt,
-      include: include,
-      property: 'date',
-      value: value,
-    ));
-  }
-
-  QueryBuilder<Post, Post, QAfterFilterCondition> dateLessThan(
-    DateTime value, {
-    bool include = false,
-  }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.lt,
-      include: include,
-      property: 'date',
-      value: value,
-    ));
-  }
-
-  QueryBuilder<Post, Post, QAfterFilterCondition> dateBetween(
-    DateTime lower,
-    DateTime upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return addFilterConditionInternal(FilterCondition.between(
-      property: 'date',
-      lower: lower,
-      includeLower: includeLower,
-      upper: upper,
-      includeUpper: includeUpper,
-    ));
-  }
-
   QueryBuilder<Post, Post, QAfterFilterCondition> hasListenersEqualTo(
       bool value) {
     return addFilterConditionInternal(FilterCondition(
@@ -527,6 +361,107 @@ extension PostQueryFilter on QueryBuilder<Post, Post, QFilterCondition> {
       includeLower: includeLower,
       upper: upper,
       includeUpper: includeUpper,
+    ));
+  }
+
+  QueryBuilder<Post, Post, QAfterFilterCondition> labelEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return addFilterConditionInternal(FilterCondition(
+      type: ConditionType.eq,
+      property: 'label',
+      value: value,
+      caseSensitive: caseSensitive,
+    ));
+  }
+
+  QueryBuilder<Post, Post, QAfterFilterCondition> labelGreaterThan(
+    String value, {
+    bool caseSensitive = true,
+    bool include = false,
+  }) {
+    return addFilterConditionInternal(FilterCondition(
+      type: ConditionType.gt,
+      include: include,
+      property: 'label',
+      value: value,
+      caseSensitive: caseSensitive,
+    ));
+  }
+
+  QueryBuilder<Post, Post, QAfterFilterCondition> labelLessThan(
+    String value, {
+    bool caseSensitive = true,
+    bool include = false,
+  }) {
+    return addFilterConditionInternal(FilterCondition(
+      type: ConditionType.lt,
+      include: include,
+      property: 'label',
+      value: value,
+      caseSensitive: caseSensitive,
+    ));
+  }
+
+  QueryBuilder<Post, Post, QAfterFilterCondition> labelBetween(
+    String lower,
+    String upper, {
+    bool caseSensitive = true,
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return addFilterConditionInternal(FilterCondition.between(
+      property: 'label',
+      lower: lower,
+      includeLower: includeLower,
+      upper: upper,
+      includeUpper: includeUpper,
+      caseSensitive: caseSensitive,
+    ));
+  }
+
+  QueryBuilder<Post, Post, QAfterFilterCondition> labelStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return addFilterConditionInternal(FilterCondition(
+      type: ConditionType.startsWith,
+      property: 'label',
+      value: value,
+      caseSensitive: caseSensitive,
+    ));
+  }
+
+  QueryBuilder<Post, Post, QAfterFilterCondition> labelEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return addFilterConditionInternal(FilterCondition(
+      type: ConditionType.endsWith,
+      property: 'label',
+      value: value,
+      caseSensitive: caseSensitive,
+    ));
+  }
+
+  QueryBuilder<Post, Post, QAfterFilterCondition> labelContains(String value,
+      {bool caseSensitive = true}) {
+    return addFilterConditionInternal(FilterCondition(
+      type: ConditionType.contains,
+      property: 'label',
+      value: value,
+      caseSensitive: caseSensitive,
+    ));
+  }
+
+  QueryBuilder<Post, Post, QAfterFilterCondition> labelMatches(String pattern,
+      {bool caseSensitive = true}) {
+    return addFilterConditionInternal(FilterCondition(
+      type: ConditionType.matches,
+      property: 'label',
+      value: pattern,
+      caseSensitive: caseSensitive,
     ));
   }
 
@@ -635,28 +570,12 @@ extension PostQueryFilter on QueryBuilder<Post, Post, QFilterCondition> {
 extension PostQueryLinks on QueryBuilder<Post, Post, QFilterCondition> {}
 
 extension PostQueryWhereSortBy on QueryBuilder<Post, Post, QSortBy> {
-  QueryBuilder<Post, Post, QAfterSortBy> sortByCategoria() {
-    return addSortByInternal('categoria', Sort.asc);
-  }
-
-  QueryBuilder<Post, Post, QAfterSortBy> sortByCategoriaDesc() {
-    return addSortByInternal('categoria', Sort.desc);
-  }
-
   QueryBuilder<Post, Post, QAfterSortBy> sortByContent() {
     return addSortByInternal('content', Sort.asc);
   }
 
   QueryBuilder<Post, Post, QAfterSortBy> sortByContentDesc() {
     return addSortByInternal('content', Sort.desc);
-  }
-
-  QueryBuilder<Post, Post, QAfterSortBy> sortByDate() {
-    return addSortByInternal('date', Sort.asc);
-  }
-
-  QueryBuilder<Post, Post, QAfterSortBy> sortByDateDesc() {
-    return addSortByInternal('date', Sort.desc);
   }
 
   QueryBuilder<Post, Post, QAfterSortBy> sortByHasListeners() {
@@ -675,6 +594,14 @@ extension PostQueryWhereSortBy on QueryBuilder<Post, Post, QSortBy> {
     return addSortByInternal('id', Sort.desc);
   }
 
+  QueryBuilder<Post, Post, QAfterSortBy> sortByLabel() {
+    return addSortByInternal('label', Sort.asc);
+  }
+
+  QueryBuilder<Post, Post, QAfterSortBy> sortByLabelDesc() {
+    return addSortByInternal('label', Sort.desc);
+  }
+
   QueryBuilder<Post, Post, QAfterSortBy> sortByTitle() {
     return addSortByInternal('title', Sort.asc);
   }
@@ -685,28 +612,12 @@ extension PostQueryWhereSortBy on QueryBuilder<Post, Post, QSortBy> {
 }
 
 extension PostQueryWhereSortThenBy on QueryBuilder<Post, Post, QSortThenBy> {
-  QueryBuilder<Post, Post, QAfterSortBy> thenByCategoria() {
-    return addSortByInternal('categoria', Sort.asc);
-  }
-
-  QueryBuilder<Post, Post, QAfterSortBy> thenByCategoriaDesc() {
-    return addSortByInternal('categoria', Sort.desc);
-  }
-
   QueryBuilder<Post, Post, QAfterSortBy> thenByContent() {
     return addSortByInternal('content', Sort.asc);
   }
 
   QueryBuilder<Post, Post, QAfterSortBy> thenByContentDesc() {
     return addSortByInternal('content', Sort.desc);
-  }
-
-  QueryBuilder<Post, Post, QAfterSortBy> thenByDate() {
-    return addSortByInternal('date', Sort.asc);
-  }
-
-  QueryBuilder<Post, Post, QAfterSortBy> thenByDateDesc() {
-    return addSortByInternal('date', Sort.desc);
   }
 
   QueryBuilder<Post, Post, QAfterSortBy> thenByHasListeners() {
@@ -725,6 +636,14 @@ extension PostQueryWhereSortThenBy on QueryBuilder<Post, Post, QSortThenBy> {
     return addSortByInternal('id', Sort.desc);
   }
 
+  QueryBuilder<Post, Post, QAfterSortBy> thenByLabel() {
+    return addSortByInternal('label', Sort.asc);
+  }
+
+  QueryBuilder<Post, Post, QAfterSortBy> thenByLabelDesc() {
+    return addSortByInternal('label', Sort.desc);
+  }
+
   QueryBuilder<Post, Post, QAfterSortBy> thenByTitle() {
     return addSortByInternal('title', Sort.asc);
   }
@@ -735,18 +654,9 @@ extension PostQueryWhereSortThenBy on QueryBuilder<Post, Post, QSortThenBy> {
 }
 
 extension PostQueryWhereDistinct on QueryBuilder<Post, Post, QDistinct> {
-  QueryBuilder<Post, Post, QDistinct> distinctByCategoria(
-      {bool caseSensitive = true}) {
-    return addDistinctByInternal('categoria', caseSensitive: caseSensitive);
-  }
-
   QueryBuilder<Post, Post, QDistinct> distinctByContent(
       {bool caseSensitive = true}) {
     return addDistinctByInternal('content', caseSensitive: caseSensitive);
-  }
-
-  QueryBuilder<Post, Post, QDistinct> distinctByDate() {
-    return addDistinctByInternal('date');
   }
 
   QueryBuilder<Post, Post, QDistinct> distinctByHasListeners() {
@@ -757,6 +667,11 @@ extension PostQueryWhereDistinct on QueryBuilder<Post, Post, QDistinct> {
     return addDistinctByInternal('id');
   }
 
+  QueryBuilder<Post, Post, QDistinct> distinctByLabel(
+      {bool caseSensitive = true}) {
+    return addDistinctByInternal('label', caseSensitive: caseSensitive);
+  }
+
   QueryBuilder<Post, Post, QDistinct> distinctByTitle(
       {bool caseSensitive = true}) {
     return addDistinctByInternal('title', caseSensitive: caseSensitive);
@@ -764,16 +679,8 @@ extension PostQueryWhereDistinct on QueryBuilder<Post, Post, QDistinct> {
 }
 
 extension PostQueryProperty on QueryBuilder<Post, Post, QQueryProperty> {
-  QueryBuilder<Post, String, QQueryOperations> categoriaProperty() {
-    return addPropertyNameInternal('categoria');
-  }
-
   QueryBuilder<Post, String, QQueryOperations> contentProperty() {
     return addPropertyNameInternal('content');
-  }
-
-  QueryBuilder<Post, DateTime, QQueryOperations> dateProperty() {
-    return addPropertyNameInternal('date');
   }
 
   QueryBuilder<Post, bool, QQueryOperations> hasListenersProperty() {
@@ -782,6 +689,10 @@ extension PostQueryProperty on QueryBuilder<Post, Post, QQueryProperty> {
 
   QueryBuilder<Post, int, QQueryOperations> idProperty() {
     return addPropertyNameInternal('id');
+  }
+
+  QueryBuilder<Post, String, QQueryOperations> labelProperty() {
+    return addPropertyNameInternal('label');
   }
 
   QueryBuilder<Post, String, QQueryOperations> titleProperty() {
