@@ -18,7 +18,6 @@ class MyCustomScrollBehavior extends MaterialScrollBehavior {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   final isar = await Isar.open(schemas: [PostSchema]);
 
   runApp(
@@ -129,9 +128,12 @@ class CreatePost extends StatelessWidget {
                   onPressed: () async {
                     var ctx = context.read<PostState>();
                     Post post = ctx.salvar();
+                    ctx.createPost();
                     await isar
                         .writeTxn((isar) async => await isar.posts.put(post));
                     await ctx.readPosts(isar.posts);
+
+                    Navigator.pop(context);
                   },
                   child: const Text("Salvar"))
             ],

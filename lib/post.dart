@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
+import 'package:http/http.dart' as http;
 
 part 'post.g.dart';
 
@@ -39,10 +42,20 @@ class PostState with ChangeNotifier, DiagnosticableTreeMixin {
     return post;
   }
 
-  deletePost(IsarCollection<Post> postCollection, int id) async {
-    postCollection.delete(id);
-    readPosts(postCollection);
-  }
+  Future<http.Response> createPost() {
+  return http.post(
+    Uri.parse('http://127.0.0.1:8000/posts/posts/'),
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+      
+    },
+    body: jsonEncode(<String, String>{
+      'title': _title,
+      'label': _label,
+      'content': _content,
+    }),
+  );
+}
 
   readPosts(IsarCollection<Post> postCollection) async {
     List<Post?> newPosts = await postCollection.where().findAll();
